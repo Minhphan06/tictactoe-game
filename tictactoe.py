@@ -1,63 +1,67 @@
-# Tic-Tac-Toe Game in Python
+import tkinter as tk
+from tkinter import messagebox
 
-def print_board(board):
-    for row in board:
-        print(" | ".join(row))
-        print("-" * 10)
+class TicTacToe:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Tic Tac Toe")
+        self.current_player = "X"
+        self.board = [[None, None, None] for _ in range(3)]
+        self.buttons = [[None, None, None] for _ in range(3)]
 
-def check_winner(board, player):
-    # Check rows
-    for row in board:
-        if all(cell == player for cell in row):
+        self.create_widgets()
+
+    def create_widgets(self):
+        for row in range(3):
+            for col in range(3):
+                button = tk.Button(self.root, text="", width=10, height=3, font=("Arial", 20), 
+                                   command=lambda row=row, col=col: self.on_button_click(row, col))
+                button.grid(row=row, column=col)
+                self.buttons[row][col] = button
+
+    def on_button_click(self, row, col):
+        if self.board[row][col] is None:
+            self.board[row][col] = self.current_player
+            self.buttons[row][col].config(text=self.current_player)
+
+            if self.check_win():
+                messagebox.showinfo("Game Over", f"Player {self.current_player} wins!")
+                self.reset_game()
+            elif self.is_board_full():
+                messagebox.showinfo("Game Over", "It's a draw!")
+                self.reset_game()
+            else:
+                self.current_player = "O" if self.current_player == "X" else "X"
+
+    def check_win(self):
+        # Check rows, columns, and diagonals
+        for i in range(3):
+            if self.board[i][0] == self.board[i][1] == self.board[i][2] and self.board[i][0] is not None:
+                return True
+            if self.board[0][i] == self.board[1][i] == self.board[2][i] and self.board[0][i] is not None:
+                return True
+        if self.board[0][0] == self.board[1][1] == self.board[2][2] and self.board[0][0] is not None:
             return True
-    # Check columns
-    for col in range(3):
-        if all(board[row][col] == player for row in range(3)):
+        if self.board[0][2] == self.board[1][1] == self.board[2][0] and self.board[0][2] is not None:
             return True
-    # Check diagonals
-    if all(board[i][i] == player for i in range(3)) or all(board[i][2 - i] == player for i in range(3)):
+        return False
+
+    def is_board_full(self):
+        for row in range(3):
+            for col in range(3):
+                if self.board[row][col] is None:
+                    return False
         return True
-    return False
 
-def is_full(board):
-    return all(cell != " " for row in board for cell in row)
+    def reset_game(self):
+        for row in range(3):
+            for col in range(3):
+                self.board[row][col] = None
+                self.buttons[row][col].config(text="")
+        self.current_player = "X"
 
-def tic_tac_toe():
-    # Initialize the board
-    board = [[" " for _ in range(3)] for _ in range(3)]
-    current_player = "X"
-
-    print("Welcome to Tic-Tac-Toe!")
-    print_board(board)
-
-    while True:
-        # Get player input
-        try:
-            move = input(f"Player {current_player}, enter your move (row,col): ").strip()
-            row, col = map(int, move.split(","))
-            if board[row][col] != " ":
-                print("Cell already taken. Try again.")
-                continue
-        except (ValueError, IndexError):
-            print("Invalid input. Use the format 'row,col' (e.g., 0,1).")
-            continue
-
-        # Update the board
-        board[row][col] = current_player
-        print_board(board)
-
-        # Check for a winner
-        if check_winner(board, current_player):
-            print(f"Player {current_player} wins!")
-            break
-
-        # Check for a draw
-        if is_full(board):
-            print("It's a draw!")
-            break
-
-        # Switch player
-        current_player = "O" if current_player == "X" else "X"
-
+# Main code to run the game
 if __name__ == "__main__":
-    tic_tac_toe()
+    root = tk.Tk()
+    game = TicTacToe(root)
+    root.mainloop()
