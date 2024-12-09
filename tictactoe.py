@@ -3,7 +3,7 @@
 def print_board(board):
     for row in board:
         print(" | ".join(row))
-        print("-" * 5)
+        print("-" * 10)
 
 def check_winner(board, player):
     # Check rows
