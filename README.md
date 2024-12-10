@@ -1,6 +1,6 @@
 # Tic-Tac-Toe Game
 
-A simple text-based Tic-Tac-Toe game written in Python.
+A simple Tic-Tac-Toe game written in Python.
 
 ## How to Play
 - Run the script: `python tictactoe.py`
